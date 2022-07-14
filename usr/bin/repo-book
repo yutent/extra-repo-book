@@ -1,0 +1,160 @@
+#!/bin/bash
+
+
+
+function print_help () {
+  echo ' list            -  列出支持订阅的软件源'
+  echo ' add {name}      -  添加指定的软件源'
+  echo ' remove {name}   -  移除指定的软件源'
+  echo ' -h, --help      -  打印帮助信息'
+  echo ' -v              -  打印版本号'
+}
+
+
+function print_list () {
+  echo ' - chrome            -  谷歌浏览器源,包括stable, beta, dev'
+  echo ' - edge              -  微软Edge浏览器源'
+  echo ' - vscode            -  微软VsCode编辑器源'
+  echo ' - mysql8            -  Mysql 8.0源,包括server, client, tools等'
+  echo ' - docker            -  docker源'
+  echo ''
+}
+
+
+function add_repo () {
+  
+  case $1 in
+    chrome)
+      echo '正在添加chrome源...'
+      sudo cp /usr/lib/extra-repo-book/sources.list.d/chrome.list /etc/apt/sources.list.d/
+      sudo cp /usr/lib/extra-repo-book/trusted.gpg.d/google.gpg /etc/apt/trusted.gpg.d/
+      read -p "添加完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    edge)
+      echo '正在添加edge源...'
+      sudo cp /usr/lib/extra-repo-book/sources.list.d/edge.list /etc/apt/sources.list.d/
+      sudo cp /usr/lib/extra-repo-book/trusted.gpg.d/microsoft.gpg /etc/apt/trusted.gpg.d/
+      read -p "添加完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    vscode)
+      echo '正在添加vscode源...'
+      sudo cp /usr/lib/extra-repo-book/sources.list.d/vscode.list /etc/apt/sources.list.d/
+      sudo cp /usr/lib/extra-repo-book/trusted.gpg.d/microsoft.gpg /etc/apt/trusted.gpg.d/
+      read -p "添加完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    mysql8)
+      echo '正在添加mysql8源...'
+      sudo cp /usr/lib/extra-repo-book/sources.list.d/mysql.list /etc/apt/sources.list.d/
+      sudo cp /usr/lib/extra-repo-book/trusted.gpg.d/mysql.gpg /etc/apt/trusted.gpg.d/
+      read -p "添加完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    docker)
+      echo '正在添加docker源...'
+      sudo cp /usr/lib/extra-repo-book/sources.list.d/docker.list /etc/apt/sources.list.d/
+      sudo cp /usr/lib/extra-repo-book/trusted.gpg.d/docker.gpg /etc/apt/trusted.gpg.d/
+      read -p "添加完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    *)
+      echo '未知的源, 无法添加!!!'
+  esac
+}
+
+function remove_repo () {
+  
+  case $1 in
+    chrome)
+      echo '正在删除chrome源...'
+      sudo rm /etc/apt/sources.list.d/chrome.list
+      sudo rm /etc/apt/trusted.gpg.d/google.gpg
+      read -p "删除完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    edge)
+      echo '正在删除edge源...'
+      sudo rm /etc/apt/sources.list.d/edge.list
+      if [ ! -f /etc/apt/sources.list.d/vscode.list ]; then
+        sudo rm /etc/apt/trusted.gpg.d/microsoft.gpg
+      fi
+      read -p "删除完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    vscode)
+      echo '正在删除vscode源...'
+      sudo rm /etc/apt/sources.list.d/vscode.list
+      if [ ! -f /etc/apt/sources.list.d/edge.list ]; then
+        sudo rm /etc/apt/trusted.gpg.d/microsoft.gpg
+      fi
+      read -p "删除完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    mysql8)
+      echo '正在删除mysql8源...'
+      sudo rm /etc/apt/sources.list.d/mysql.list
+      sudo rm /etc/apt/trusted.gpg.d/mysql.gpg
+      read -p "删除完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    docker)
+      echo '正在删除docker源...'
+      sudo rm /etc/apt/sources.list.d/docker.list
+      sudo rm /etc/apt/trusted.gpg.d/docker.gpg
+      read -p "删除完成, 是否更新索引? y/n: " action
+      if [[ "$action" == "" || "$action" == "y" ]]; then
+        sudo apt update
+      fi
+      ;;
+    *)
+      echo '未知的源, 无法添加!!!'
+  esac
+}
+
+
+
+
+case "$1" in
+  list)
+    print_list
+    ;;
+
+  -v)
+    echo '1.0.0'
+    ;;
+
+  add)
+    add_repo $2
+    ;;
+
+  remove)
+    remove_repo $2
+    ;;
+
+  -h|--help)
+    print_help
+    ;;
+  *)
+    print_help
+
+esac
